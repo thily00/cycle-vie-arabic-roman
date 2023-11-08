@@ -70,6 +70,13 @@ app.get('/', (req, res) => {
           <input type="text" name="arabicNumber" id="arabicNumber" required>
           <button type="submit">Convertir</button>
         </form>
+
+        <h1>Convertisseur chiffres romains en chiffres arabes</h1>
+        <form class="form-container" method="post" action="/invert-convert">
+          <label for="romanNumber">Entrez un chiffre romain:</label>
+          <input type="text" name="romanNumber" id="romanNumber" required>
+          <button type="submit">Convertir</button>
+        </form>
       </body>
     </html>
   `);
@@ -84,6 +91,18 @@ app.post('/convert', (req, res) => {
     res.send('Invalid input. Please enter a valid Arabic number.');
   }
 });
+
+
+
+app.post('/invert-convert', (req, res) => {
+    const romanNumber = req.body.romanNumber.toUpperCase(); // Convertir en majuscules pour gérer les entrées en minuscules
+    const arabicNumber = convertToArabic(romanNumber);
+    if (arabicNumber !== null) {
+      res.send(`Arabic Numeral: ${arabicNumber}`);
+    } else {
+      res.send('Invalid input. Please enter a valid Roman numeral.');
+    }
+  });
 
 function convertToRoman(number) {
     if (number < 1 || number > 3999) {
@@ -103,7 +122,42 @@ function convertToRoman(number) {
     const ones = romanNumerals[3][number % 10];
   
     return thousands + hundreds + tens + ones;
-  }
+}
+
+function convertToArabic(romanNumber) {
+    const romanNumerals = {
+      "I": 1,
+      "V": 5,
+      "X": 10,
+      "L": 50,
+      "C": 100,
+      "D": 500,
+      "M": 1000
+    };
+  
+    let arabicNumber = 0;
+    let prevValue = 0;
+  
+    for (let i = romanNumber.length - 1; i >= 0; i--) {
+      const currentChar = romanNumber[i];
+      const currentValue = romanNumerals[currentChar];
+  
+      if (currentValue >= prevValue) {
+        arabicNumber += currentValue;
+      } else {
+        arabicNumber -= currentValue;
+      }
+  
+      prevValue = currentValue;
+    }
+  
+    // Vérifier si la conversion est valide en reconvertissant l'arabe en romain
+    if (convertToRoman(arabicNumber) === romanNumber) {
+      return arabicNumber;
+    } else {
+      return null; // Retourne null en cas de nombre romain invalide
+    }
+}
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
