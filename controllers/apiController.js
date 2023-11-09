@@ -1,20 +1,18 @@
-function convert(req, res) {
-    const arabicNumber = parseInt(req.body.arabicNumber);
+function convert(arabicNumber) {
     if (!isNaN(arabicNumber) && arabicNumber > 0 && arabicNumber < 4000) {
         const romanNumeral = convertToRoman(arabicNumber);
-        res.send(`Roman Numeral: ${romanNumeral}`);
+        return romanNumeral;
     } else {
-        res.send('Invalid input. Please enter a valid Arabic number.');
+        return 'Invalid input. Please enter a valid Arabic number.';
     }
 }
 
-function invertConvert(req, res) {
-    const romanNumber = req.body.romanNumber.toUpperCase();
+function invertConvert(romanNumber) {
     const arabicNumber = convertToArabic(romanNumber);
     if (arabicNumber !== null) {
-        res.send(`Arabic Numeral: ${arabicNumber}`);
+        return arabicNumber;
     } else {
-        res.send('Invalid input. Please enter a valid Roman numeral.');
+        return 'Invalid input. Please enter a valid Roman numeral.';
     }
 }
 
